@@ -1,0 +1,21 @@
+{
+  "name": "ea03",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "gh-pages -d dist",
+    "build": "rollup --config --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://lieskpat.github.io/webgl_ea3",
+  "dependencies": {
+    "gh-pages": "^4.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-run": "^3.0.0",
+    "rollup": "^3.2.3"
+  }
+}
