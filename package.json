@@ -1,5 +1,5 @@
 {
-  "name": "ea03",
+  "name": "ea04",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "homepage": "https://lieskpat.github.io/webgl_ea3",
+  "homepage": "https://lieskpat.github.io/webgl_ea4",
   "dependencies": {
     "gh-pages": "^4.0.0"
   },

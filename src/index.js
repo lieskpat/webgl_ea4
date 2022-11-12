@@ -3,7 +3,15 @@
 import { initContext } from "./modules/initContext.js";
 import { initWebGl, initBuffer } from "./modules/initWebGl.js";
 
-function createVertexData() {
+function createVertexData(callback) {
+    const vertexDataObject = { vertices: [], indices: [] };
+    callback(vertexDataObject);
+    return vertexDataObject;
+}
+
+//const colors = new Float32Array([]);
+
+const spinnenNetz = function (vertexDataObject) {
     const m = 5;
     const n = 32;
     const vertices = new Float32Array(3 * (n + 1) * (m + 1));
@@ -33,25 +41,35 @@ function createVertexData() {
             }
         }
     }
-    return {
-        vertices: vertices,
-        indices: indices,
-    };
-}
-//const colors = new Float32Array([]);
+    vertexDataObject.vertices = vertices;
+    vertexDataObject.indices = indices;
+};
 
-const vertexData = createVertexData();
-console.log(vertexData);
+const vertexDataSpider = createVertexData(spinnenNetz);
+const vertexDataKonus = createVertexData(function (vertexDataObject) {});
 
 const gl = initContext("gl_context");
+const gl2 = initContext("gl_context_02");
+const gl3 = initContext("gl_context_03");
+const gl4 = initContext("gl_context_04");
 const initObject = initWebGl(gl);
+const initObject2 = initWebGl(gl2);
 gl.useProgram(initObject.program);
+gl2.useProgram(initObject2.program);
 
 initBuffer(
     gl,
-    vertexData.vertices,
+    vertexDataSpider.vertices,
     gl.ARRAY_BUFFER,
     initObject.program,
+    "pos",
+    3
+);
+initBuffer(
+    gl2,
+    vertexDataSpider.vertices,
+    gl2.ARRAY_BUFFER,
+    initObject2.program,
     "pos",
     3
 );
@@ -59,9 +77,32 @@ initBuffer(
 
 const ibo = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vertexData.indices, gl.STATIC_DRAW);
-ibo.numberOfElements = vertexData.indices.length;
+gl.bufferData(
+    gl.ELEMENT_ARRAY_BUFFER,
+    vertexDataSpider.indices,
+    gl.STATIC_DRAW
+);
+ibo.numberOfElements = vertexDataSpider.indices.length;
+
+const ibo2 = gl2.createBuffer();
+gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, ibo2);
+gl2.bufferData(
+    gl2.ELEMENT_ARRAY_BUFFER,
+    vertexDataSpider.indices,
+    gl2.STATIC_DRAW
+);
+ibo2.numberOfElements = vertexDataSpider.indices.length;
 
 gl.clearColor(0.95, 0.95, 0.95, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
 gl.drawElements(gl.LINE_STRIP, ibo.numberOfElements, gl.UNSIGNED_SHORT, 0);
+
+gl2.clearColor(0.95, 0.95, 0.95, 1);
+gl2.clear(gl2.COLOR_BUFFER_BIT);
+gl2.drawElements(gl2.LINE_STRIP, ibo2.numberOfElements, gl2.UNSIGNED_SHORT, 0);
+
+gl3.clearColor(0.95, 0.95, 0.95, 1);
+gl3.clear(gl.COLOR_BUFFER_BIT);
+
+gl4.clearColor(0.95, 0.95, 0.95, 1);
+gl4.clear(gl.COLOR_BUFFER_BIT);
