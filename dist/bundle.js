@@ -216,6 +216,7 @@
         const c = 0.17;
         const vertices = new Float32Array(3 * (n + 1) * (m + 1));
         const indices = new Uint16Array(2 * 2 * n * m);
+        const indicesTriangles = new Uint16Array(3 * 2 * n * m);
 
         const du = (4 * Math.PI) / n;
         const dv = (2 - 0.01) / n;
@@ -223,6 +224,7 @@
         const b = 0.6;
 
         let iIndex = 0;
+        let iTriangles = 0;
 
         for (let i = 0, u = 0; i <= n; i++, u += du) {
             for (let j = 0, v = 0.01; j <= m; j++, v += dv) {
@@ -245,10 +247,20 @@
                     indices[iIndex++] = iVertex - (m + 1);
                     indices[iIndex++] = iVertex;
                 }
+                if (j > 0 && i > 0) {
+                    indicesTriangles[iTriangles++] = iVertex;
+                    indicesTriangles[iTriangles++] = iVertex - 1;
+                    indicesTriangles[iTriangles++] = iVertex - (m + 1);
+
+                    indicesTriangles[iTriangles++] = iVertex - 1;
+                    indicesTriangles[iTriangles++] = iVertex - (m + 1) - 1;
+                    indicesTriangles[iTriangles++] = iVertex - (m + 1);
+                }
             }
         }
         vertexDataObject.vertices = vertices;
         vertexDataObject.indices = indices;
+        vertexDataObject.indicesTriangles = indicesTriangles;
     };
 
     const vertexDataPillow = createVertexData(pillow);
@@ -309,6 +321,17 @@
         gl2.STATIC_DRAW
     );
     ibo2.numberOfElements = vertexDataDinis.indices.length;
+    gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, null);
+
+    const ibo2Color = gl2.createBuffer();
+    gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, ibo2Color);
+    gl2.bufferData(
+        gl2.ELEMENT_ARRAY_BUFFER,
+        vertexDataDinis.indicesTriangles,
+        gl2.STATIC_DRAW
+    );
+    ibo2Color.numberOfElements = vertexDataDinis.indicesTriangles.length;
+    gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, null);
 
     const ibo3 = gl3.createBuffer();
     gl3.bindBuffer(gl3.ELEMENT_ARRAY_BUFFER, ibo3);
@@ -342,6 +365,17 @@
     gl2.frontFace(gl2.CCW);
     gl2.enable(gl2.CULL_FACE);
     gl2.cullFace(gl2.BACK);
+    const colAttribute2 = gl2.getAttribLocation(initObject2.program, "col");
+    gl2.vertexAttrib4f(colAttribute2, 0.5, 0.8, 0, 1);
+    gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, ibo2Color);
+    gl2.drawElements(
+        gl2.TRIANGLES,
+        ibo2Color.numberOfElements,
+        gl2.UNSIGNED_SHORT,
+        0
+    );
+    gl2.vertexAttrib4f(colAttribute2, 0, 0, 0, 1);
+    gl2.bindBuffer(gl2.ELEMENT_ARRAY_BUFFER, ibo2);
     gl2.drawElements(gl2.LINES, ibo2.numberOfElements, gl2.UNSIGNED_SHORT, 0);
 
     gl3.clearColor(0.95, 0.95, 0.95, 1);
